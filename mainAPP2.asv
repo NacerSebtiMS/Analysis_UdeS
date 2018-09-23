@@ -47,9 +47,13 @@ covarianceP300N_ref = (m*m')/(length(ref_NP300)-1)
 
 %% Pertinence d'une décorrélation des coordonnées
 
-[a,b ]= eig(covarianceP300_ref);
+k = sym('k')
 
-[a,b ]= eig(covarianceP300N_ref)
+eq1 = det(covarianceP300_ref - k*eye(length(moyP300_ref)));
+vpa(root(det(covarianceP300_ref - k*eye(length(moyP300_ref))),k))
+[a,b ]= eig(covarianceP300_ref)
+% 
+% [a,b ]= eig(covarianceP300N_ref)
 
 
 %% Pertinence de réduction de dimension par décorrélation (performence)
@@ -70,7 +74,7 @@ covarianceP300N_ref = (m*m')/(length(ref_NP300)-1)
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-
+K_PPV(ref_P300,ref_NP300,0,300,314)
 %% k-moyennnes
 
 %% Taux d'erreur de classification des 5 techiques
