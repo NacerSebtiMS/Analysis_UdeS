@@ -74,8 +74,27 @@ vpa(root(det(covarianceP300_ref - k*eye(length(moyP300_ref))),k))
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-K_PPV(ref_P300,ref_NP300,0,300,315)
+%K_PPV(ref_P300,ref_NP300,0,300,315)
 %% k-moyennnes
+
+%C = kmoyen(test_P300,2);
+
+test2_p300 = cat(1,ref_P300,ref_NP300);
+C = kmoyen(test2_p300,2);
+
+c_p300 = 0;
+c_np300 = 0;
+
+for r = 1:length(ref_P300)
+    c_p300 = c_p300 + 1;
+end
+
+for r = length(ref_P300)+1:length(ref_NP300)
+    c_np300 = c_np300 + 1;
+end
+disp(['good p300 : ',num2str(c_p300),'  bad p300 : ',num2str(length(ref_P300) - c_p300)]);
+disp(['good np300 : ',num2str(c_np300),'  bad np300 : ',num2str(length(ref_NP300) - c_np300)]);
+
 
 %% Taux d'erreur de classification des 5 techiques
 
