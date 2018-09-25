@@ -34,8 +34,10 @@ function [C] = kmoyen(X,k)
             end
         end
         
-        sd1 = [0 0 0 0];
-        sd2 = [0 0 0 0];
+        [a,b] = size(X);
+        sd1 = zeros(1,b);
+        sd2 = zeros(1,b);
+        
         csd1 = 0;
         csd2 = 0;
         

@@ -4,6 +4,7 @@
 % Sebti, Nacer          sebn3001 
 % Sermaxhaj, Adriatik   sera1901
 clear
+close all
 clc
 
 %% PARTIE 1.1 (Étudie et analyse des distributions)
@@ -131,10 +132,13 @@ if 0
 end
 
 
-if 1
+if 0
 
-    x1 = randn(1,length(ref_P300));
-    x2 = randn(1,length(ref_NP300));
+    x1 = zeros(1,length(ref_P300));
+    x2 = zeros(1,length(ref_NP300));
+    
+%     x1 = randn(1,length(ref_P300));
+%     x2 = randn(1,length(ref_NP300));
 
     figure(1);
     plot(x1,ref_P300(:,1)','o');
@@ -274,7 +278,8 @@ end
 
 %C = kmoyen(test_P300,2);
 
-test2_p300 = cat(1,ref_P300_dec,ref_NP300_dec);
+% test2_p300 = cat(1,[ref_P300_dec,ref_NP300_dec);
+test2_p300 = cat(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)]);
 C = kmoyen(test2_p300,2);
 
 c_p300 = 0;
