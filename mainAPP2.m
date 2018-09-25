@@ -74,7 +74,7 @@ vpa(root(det(covarianceP300_ref - k*eye(length(moyP300_ref))),k))
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-K_PPV(ref_P300,ref_NP300,test_NP300,300,315)
+K_PPV(1,ref_P300,ref_NP300,test_P300,300,315)
 %% k-moyennnes
 
 %% Taux d'erreur de classification des 5 techiques
