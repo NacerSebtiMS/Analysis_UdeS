@@ -14,17 +14,153 @@ ref_P300 = load('ref_P300');
 ref_NP300 = load('ref_NP300');
 Inconnus = load('Inconnus');
 
+if 0
+    figure(1)
+    plotmatrix(ref_P300(:,1));
 
-figure(1)
-bc = [sum(ref_P300(1,:)) sum(ref_P300(:,2)) sum(ref_P300(:,3)) sum(ref_P300(:,4))];
-bc = bc/length(ref_P300);
-plot_p300 = zeros(length(ref_P300),1);
+    figure(2)
+    plotmatrix(ref_NP300(:,1));
 
-for i = 1:length(ref_P300)
-    plot_p300(i,1) = sum((ref_P300(i,:) - bc));
+    figure(3)
+    plotmatrix(ref_P300(:,2));
+
+    figure(4)
+    plotmatrix(ref_NP300(:,2));
+
+    figure(5)
+    plotmatrix(ref_P300(:,3));
+
+    figure(6)
+    plotmatrix(ref_NP300(:,3)); 
+    
+    figure(7)
+    plotmatrix(ref_P300(:,4));
+
+    figure(8)
+    plotmatrix(ref_NP300(:,4)); 
+    
 end
 
-plotmatrix(plot_p300);
+% Probabile par rapport au barycentre
+if 0
+    
+    figure(1)
+    bc = [sum(ref_P300(1,:)) sum(ref_P300(:,2)) sum(ref_P300(:,3)) sum(ref_P300(:,4))];
+    bc = bc/length(ref_P300);
+    plot_p300 = zeros(length(ref_P300),1);
+
+    for i = 1:length(ref_P300)
+        plot_p300(i,1) = sum((ref_P300(i,:) - bc));
+    end
+
+    plotmatrix(plot_p300);
+    
+    
+    figure(2)
+    bc = [sum(ref_NP300(1,:)) sum(ref_NP300(:,2)) sum(ref_NP300(:,3)) sum(ref_NP300(:,4))];
+    bc = bc/length(ref_NP300);
+    plot_p300 = zeros(length(ref_NP300),1);
+
+    for i = 1:length(ref_NP300)
+        plot_p300(i,1) = sum((ref_NP300(i,:) - bc));
+    end
+
+    plotmatrix(plot_p300);
+
+end
+
+% Probabile par rapport a la moyenne
+if 0
+    
+    figure(1)
+    bc = sum(ref_P300(1,:));
+    bc = bc/length(ref_P300);
+    p300 = ones(length(ref_P300),1)*bc;   
+    distrib_p300 = ref_P300(:,1) - p300;
+    plotmatrix(distrib_p300);
+    
+    figure(2)
+    bc = sum(ref_NP300(1,:));
+    bc = bc/length(ref_NP300);
+    np300 = ones(length(ref_NP300),1)*bc;   
+    distrib_np300 = ref_NP300(:,1) - np300;
+    plotmatrix(distrib_np300);
+    
+    figure(3)
+    bc = sum(ref_P300(2,:));
+    bc = bc/length(ref_P300);
+    p300 = ones(length(ref_P300),1)*bc;   
+    distrib_p300 = ref_P300(:,2) - p300;
+    plotmatrix(distrib_p300);
+    
+    figure(4)
+    bc = sum(ref_NP300(2,:));
+    bc = bc/length(ref_NP300);
+    np300 = ones(length(ref_NP300),1)*bc;   
+    distrib_np300 = ref_NP300(:,2) - np300;
+    plotmatrix(distrib_np300);
+    
+    figure(5)
+    bc = sum(ref_P300(3,:));
+    bc = bc/length(ref_P300);
+    p300 = ones(length(ref_P300),1)*bc;   
+    distrib_p300 = ref_P300(:,3) - p300;
+    plotmatrix(distrib_p300);
+    
+    figure(6)
+    bc = sum(ref_NP300(3,:));
+    bc = bc/length(ref_NP300);
+    np300 = ones(length(ref_NP300),1)*bc;   
+    distrib_np300 = ref_NP300(:,3) - np300;
+    plotmatrix(distrib_np300);
+    
+    figure(7)
+    bc = sum(ref_P300(4,:));
+    bc = bc/length(ref_P300);
+    p300 = ones(length(ref_P300),1)*bc;   
+    distrib_p300 = ref_P300(:,4) - p300;
+    plotmatrix(distrib_p300);
+    
+    figure(8)
+    bc = sum(ref_NP300(4,:));
+    bc = bc/length(ref_NP300);
+    np300 = ones(length(ref_NP300),1)*bc;   
+    distrib_np300 = ref_NP300(:,4) - np300;
+    plotmatrix(distrib_np300);
+
+end
+
+
+if 1
+
+    x1 = randn(1,length(ref_P300));
+    x2 = randn(1,length(ref_NP300));
+
+    figure(1);
+    plot(x1,ref_P300(:,1)','o');
+    
+    figure(2);
+    plot(x2,ref_NP300(:,1)','o');
+    
+    figure(3);
+    plot(x1,ref_P300(:,2)','x');
+    
+    figure(4);
+    plot(x2,ref_NP300(:,2)','x');
+    
+    figure(5);
+    plot(x1,ref_P300(:,3)','*');
+    
+    figure(6);
+    plot(x2,ref_NP300(:,3)','*');
+    
+    figure(7);
+    plot(x1,ref_P300(:,4)','+');
+    
+    figure(8);
+    plot(x2,ref_NP300(:,4)','+');
+
+end
 
 % figure(2)
 % plotmatrix(ref_P300(:,1));
@@ -38,11 +174,11 @@ plotmatrix(plot_p300);
 % figure(5)
 % plotmatrix(ref_P300(:,4));
 % 
-figure(6)
-plotmatrix(ref_P300);
-
-figure(7)
-plotmatrix(ref_NP300);
+% figure(6)
+% plotmatrix(ref_P300);
+% 
+% figure(7)
+% plotmatrix(ref_NP300);
 
 
 %% Valeur propre matrice de covarience
@@ -60,7 +196,7 @@ covarianceP300N_ref = (m*m')/(length(ref_NP300)-1);
 %covarianceP300_ref_diago = vecp*valp*inv(vecp);
 %covarianceP300_ref_diago2 = diag(covarianceP300_ref)
 
-[vecp_NP300,valp]= eig(covarianceP300N_ref)
+[vecp_NP300,valp]= eig(covarianceP300N_ref);
 %covarianceNP300_ref_diago = vecp*valp*inv(vecp);
 
 
@@ -72,11 +208,38 @@ covarianceP300N_ref = (m*m')/(length(ref_NP300)-1);
 ref_P300_dec = ref_P300*vecp_P300;
 ref_NP300_dec = ref_NP300*vecp_NP300;
 
-figure(6)
-plotmatrix(ref_P300_dec);
+if 0
+    figure(1)
+    plotmatrix(ref_P300_dec(:,1));
 
-figure(7)
-plotmatrix(ref_NP300_dec);
+    figure(2)
+    plotmatrix(ref_NP300_dec(:,1));
+
+    figure(3)
+    plotmatrix(ref_P300_dec(:,2));
+
+    figure(4)
+    plotmatrix(ref_NP300_dec(:,2));
+
+    figure(5)
+    plotmatrix(ref_P300_dec(:,3));
+
+    figure(6)
+    plotmatrix(ref_NP300_dec(:,3)); 
+    
+    figure(7)
+    plotmatrix(ref_P300_dec(:,4));
+
+    figure(8)
+    plotmatrix(ref_NP300_dec(:,4)); 
+    
+end
+
+% figure(6)
+% plotmatrix(ref_P300_dec);
+% 
+% figure(7)
+% plotmatrix(ref_NP300_dec);
 
 
 % k = sym('k')
