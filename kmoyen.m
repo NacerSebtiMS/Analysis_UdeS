@@ -13,8 +13,6 @@ function [C] = kmoyen(X,k)
     b2 = X(round(ran2*length(X)),:);
     
     
-    
-        
     end_loop = 1;
     old_dist = 0;
     disb = 0;
