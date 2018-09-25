@@ -279,19 +279,41 @@ end
 %C = kmoyen(test_P300,2);
 
 % test2_p300 = cat(1,[ref_P300_dec,ref_NP300_dec);
-test2_p300 = cat(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)]);
+test2_p300 = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)]);
+%test2_p300 = cat(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)]);
 C = kmoyen(test2_p300,2);
+
+if 1
+    figure(9)
+    plot(test2_p300(:,1),test2_p300(:,2),'o');
+    
+    figure(10)
+    plot(ref_P300(:,2),ref_P300(:,3),'o');
+    
+    figure(11)
+    plot(ref_NP300(:,2),ref_NP300(:,3),'o');
+    
+    
+    figure(12)
+    plot(test2_p300(:,1),test2_p300(:,2),'o',ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,4),'+');
+    
+end
 
 c_p300 = 0;
 c_np300 = 0;
 
 for r = 1:length(ref_P300)
-    c_p300 = c_p300 + 1;
+    if C(r,1) == 1
+        c_p300 = c_p300 + 1;
+    end
 end
 
 for r = length(ref_P300)+1:length(ref_NP300)
-    c_np300 = c_np300 + 1;
+    if C(r,1) == 0
+        c_np300 = c_np300 + 1;
+    end
 end
+
 disp(['good p300 : ',num2str(c_p300),'  bad p300 : ',num2str(length(ref_P300) - c_p300)]);
 disp(['good np300 : ',num2str(c_np300),'  bad np300 : ',num2str(length(ref_NP300) - c_np300)]);
 
