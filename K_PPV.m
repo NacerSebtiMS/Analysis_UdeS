@@ -15,7 +15,7 @@ function classed = K_PPV(rp,rnp,c,c1,c2)
 % end
 classed = cat(2,c,zeros(length(c),1));
 for i = 1:length(c)
-   min = [dist(rn(i,:)) c1];
+   min = [dist(rp(i,:)) c1];
    for a = 1:length(rp)
        
    end

@@ -133,36 +133,27 @@ end
 
 
 if 0
-
-    x1 = zeros(1,length(ref_P300));
-    x2 = zeros(1,length(ref_NP300));
+%     x1 = ones(1,length(ref_P300));
+%     x2 = ones(1,length(ref_NP300))*2;
     
-%     x1 = randn(1,length(ref_P300));
-%     x2 = randn(1,length(ref_NP300));
+    x1 = randn(1,length(ref_P300));
+    x2 = randn(1,length(ref_NP300));
 
     figure(1);
-    plot(x1,ref_P300(:,1)','o');
+    plot(x1,ref_P300(:,1)','o',x2,ref_NP300(:,1)','*');
     
     figure(2);
-    plot(x2,ref_NP300(:,1)','o');
+    plot(x1,ref_P300(:,2)','o',x2,ref_NP300(:,2)','*');
     
     figure(3);
-    plot(x1,ref_P300(:,2)','x');
+    plot(x1,ref_P300(:,3)','o',x2,ref_NP300(:,3)','*');
     
     figure(4);
-    plot(x2,ref_NP300(:,2)','x');
+    plot(x1,ref_P300(:,4)','o',x2,ref_NP300(:,4)','*');
     
     figure(5);
-    plot(x1,ref_P300(:,3)','*');
-    
-    figure(6);
-    plot(x2,ref_NP300(:,3)','*');
-    
-    figure(7);
-    plot(x1,ref_P300(:,4)','+');
-    
-    figure(8);
-    plot(x2,ref_NP300(:,4)','+');
+    plot(ref_P300(:,1)',ref_P300(:,4)','o',ref_NP300(:,1)',ref_NP300(:,4)','*');
+   
 
 end
 
@@ -191,16 +182,16 @@ moyP300_ref = [sum(ref_P300(:,1))/length(ref_P300); sum(ref_P300(:,2))/length(re
 moyP300N_ref = [sum(ref_NP300(:,1))/length(ref_NP300); sum(ref_NP300(:,2))/length(ref_NP300) ; sum(ref_NP300(:,3))/length(ref_NP300) ; sum(ref_NP300(:,4))/length(ref_NP300)];
 
 m = ref_P300'- moyP300_ref;
-covarianceP300_ref = (m*m')/(length(ref_P300)-1);
+covarianceP300_ref = (m*m')/(length(ref_P300)-1)
 m = ref_NP300'- moyP300N_ref;
-covarianceP300N_ref = (m*m')/(length(ref_NP300)-1);
+covarianceP300N_ref = (m*m')/(length(ref_NP300)-1)
 
 
-[vecp_P300,valp]= eig(covarianceP300_ref); 
+[vecp_P300,valp]= eig(covarianceP300_ref) 
 %covarianceP300_ref_diago = vecp*valp*inv(vecp);
 %covarianceP300_ref_diago2 = diag(covarianceP300_ref)
 
-[vecp_NP300,valp]= eig(covarianceP300N_ref);
+[vecp_NP300,valp]= eig(covarianceP300N_ref)
 %covarianceNP300_ref_diago = vecp*valp*inv(vecp);
 
 
@@ -212,6 +203,7 @@ covarianceP300N_ref = (m*m')/(length(ref_NP300)-1);
 ref_P300_dec = ref_P300*vecp_P300;
 ref_NP300_dec = ref_NP300*vecp_NP300;
 
+test_P300_dec = ref_NP300*vecp_NP300;
 if 0
     figure(1)
     plotmatrix(ref_P300_dec(:,1));
@@ -279,19 +271,23 @@ end
 %C = kmoyen(test_P300,2);
 
 % test2_p300 = cat(1,[ref_P300_dec,ref_NP300_dec);
-test2_p300 = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)]);
-%test2_p300 = cat(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)]);
+%test2_p300 = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)]);
+test2_p300 = cat(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)]);
+
+test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
+
+test_rand = cat(2,test_rand,ones(length(test_rand),1));
 C = kmoyen(test2_p300,2);
 
-if 1
+if 0
     figure(9)
     plot(test2_p300(:,1),test2_p300(:,2),'o');
     
     figure(10)
-    plot(ref_P300(:,2),ref_P300(:,3),'o');
+    plot(ref_P300(:,1),ref_P300(:,4),'o');
     
     figure(11)
-    plot(ref_NP300(:,2),ref_NP300(:,3),'o');
+    plot(ref_NP300(:,1),ref_NP300(:,4),'o');
     
     
     figure(12)
@@ -319,8 +315,6 @@ disp(['good np300 : ',num2str(c_np300),'  bad np300 : ',num2str(length(ref_NP300
 
 
 %% Taux d'erreur de classification des 5 techiques
-
-
 
 
 %% PARTIE 2

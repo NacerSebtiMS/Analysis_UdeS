@@ -17,9 +17,10 @@ function [C] = kmoyen(X,k)
     old_dist = 0;
     disb = 0;
     
-    while end_loop  % tant que le l'etat des barycentes reste pareille
+    while end_loop  % tant que l'etat des barycentes reste pareille
         old_dist = disb;
         disb = sum((b1 - b2).^2);
+
         disp(['Distance entre bericentres : ',num2str(disb)]);
 
         for r = 1:length(X)
