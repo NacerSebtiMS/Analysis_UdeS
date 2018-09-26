@@ -41,10 +41,35 @@ end
 
 
 %% Valeur propre matrice de covarience
+
+M = min(length(ref_P300),length(ref_NP300));
+X1_ref = [ref_P300(1:M,1) ref_NP300(1:M,1)];
+X2_ref = [ref_P300(1:M,2) ref_NP300(1:M,2)];
+X3_ref = [ref_P300(1:M,3) ref_NP300(1:M,3)];
+X4_ref = [ref_P300(1:M,4) ref_NP300(1:M,4)];
+
+moy_X1_ref = [sum(ref_P300(:,1))/length(ref_P300); sum(ref_NP300(:,1))/length(ref_NP300)];
+moy_X2_ref = [sum(ref_P300(:,2))/length(ref_P300); sum(ref_NP300(:,2))/length(ref_NP300)];
+moy_X3_ref = [sum(ref_P300(:,3))/length(ref_P300); sum(ref_NP300(:,3))/length(ref_NP300)];
+moy_X4_ref = [sum(ref_P300(:,4))/length(ref_P300); sum(ref_NP300(:,4))/length(ref_NP300)];
+
+vX1 = X1_ref'- moy_X1_ref;
+cov_X1_ref = (vX1*vX1')/(M-1);
+
+vX2 = X2_ref'- moy_X2_ref;
+cov_X2_ref = (vX2*vX2')/(M-1);
+
+vX3 = X3_ref'- moy_X3_ref;
+cov_X3_ref = (vX3*vX3')/(M-1);
+
+vX4 = X4_ref'- moy_X4_ref;
+cov_X4_ref = (vX4*vX4')/(M-1);
+
 P300_both_ref = cat(1,ref_P300,ref_NP300);
 moyP300_ref = [sum(ref_P300(:,1))/length(ref_P300); sum(ref_P300(:,2))/length(ref_P300) ; sum(ref_P300(:,3))/length(ref_P300) ; sum(ref_P300(:,4))/length(ref_P300)];
 moyP300N_ref = [sum(ref_NP300(:,1))/length(ref_NP300); sum(ref_NP300(:,2))/length(ref_NP300) ; sum(ref_NP300(:,3))/length(ref_NP300) ; sum(ref_NP300(:,4))/length(ref_NP300)];
 moyP300_both_ref = [sum(P300_both_ref(:,1))/length(P300_both_ref); sum(P300_both_ref(:,2))/length(P300_both_ref) ; sum(P300_both_ref(:,3))/length(P300_both_ref) ; sum(P300_both_ref(:,4))/length(P300_both_ref)];
+
 
 m = ref_P300'- moyP300_ref;
 covarianceP300_ref = (m*m')/(length(ref_P300)-1);
@@ -58,6 +83,9 @@ covarianceP300_both_ref = (m*m')/(length(P300_both_ref)-1);
 [vecp_P300,valp]= eig(covarianceP300_ref); 
 [vecp_NP300,valp]= eig(covarianceP300N_ref);
 [vecp_P300_both,valp]= eig(covarianceP300_both_ref);
+
+[vecp_X1_ref,valp]= eig(cov_X1_ref);
+[vecp_X4_ref,valp]= eig(cov_X4_ref);
 
 
 if 0
@@ -92,8 +120,6 @@ ref_P300_dec = ref_P300*vecp_P300_both;
 ref_NP300_dec = ref_NP300*vecp_P300_both;
 test_P300_dec = test_P300*vecp_P300_both;
 test_NP300_dec = test_NP300*vecp_P300_both;
-
-
 
 %% Pertinence de réduction de dimension par décorrélation (performence)
 
