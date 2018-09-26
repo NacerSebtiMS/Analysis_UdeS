@@ -265,7 +265,9 @@ end
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-%K_PPV(ref_P300,ref_NP300,0,300,315)
+
+K_PPV(1,ref_P300,ref_NP300,test_P300,300,315)
+
 %% k-moyennnes
 
 %C = kmoyen(test_P300,2);
