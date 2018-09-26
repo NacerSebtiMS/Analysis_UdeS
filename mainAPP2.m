@@ -98,12 +98,12 @@ test_NP300_dec = test_NP300*vecp_P300_both;
 %% Pertinence de réduction de dimension par décorrélation (performence)
 
 test_both_p300_dec = cat(1,[test_P300_dec(:,1) test_P300_dec(:,4)],[test_NP300_dec(:,1) test_NP300_dec(:,4)]);
-
+ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)]); 
 
 %% Forme des probabilités après décorrélation
 
 figure
-plot(test_both_p300_dec(:,1),test_both_p300_dec(:,2),'o',ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,4),'+');
+plot(ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,4),'+');
 
 %% Forme visuelle des équations des frontières après décorrélation
 
@@ -120,8 +120,9 @@ plot(test_both_p300_dec(:,1),test_both_p300_dec(:,2),'o',ref_P300_dec(:,1),ref_P
 
 %% k-PPV
 
-K_PPV(1,ref_P300,ref_NP300,test_P300,300,315);
-K_PPV(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)],test_both_p300_dec,300,315);
+R = K_PPV(1,ref_P300,ref_NP300,test_P300,300,315);
+C_kppv = K_PPV(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)],test_both_p300_dec,0,1);
+[C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
 
 %% k-moyennnes
 
@@ -129,6 +130,8 @@ K_PPV(1,[ref_P300(:,1) ref_P300(:,4)],[ref_NP300(:,1) ref_NP300(:,4)],test_both_
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
 
 C = kmoyen(test_both_p300_dec,2);
+figure
+plot(test_P300_dec(:,1),test_P300_dec(:,4),'*',test_NP300_dec(:,1),test_NP300_dec(:,4),'o')
 [C1,C2] = PlotPPV(test_both_p300_dec,C);
 
 
