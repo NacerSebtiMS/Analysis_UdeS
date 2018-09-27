@@ -91,7 +91,7 @@ Rot = [vecp_P300(:,1) vecp_NP300(:,4)]
 R1 = ref_P300 * Rot;
 
 R2 = ref_NP300 * Rot;
-
+if 0
 subplot(2,2,1)
 plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
 subplot(2,2,2)
@@ -100,7 +100,7 @@ title("P300")
 subplot(2,2,3)
 plot(R2(:,1),R2(:,2),'o');
 title("NP300")
-
+end
 [vecp_P300_both,valp]= eig(covarianceP300_both_ref);
 
 [vecp_X1_ref,valp]= eig(cov_X1_ref);
@@ -157,15 +157,18 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 %% PARTIE 1.2 (Trois algorithmes de classification bayesienne)
 %% Hypothèse que les loi sont gaussienne
 
-syms x1 x2;
-x = [x1;x2];
-covarianceP300_ref = [covarianceP300_ref(1,1),covarianceP300_ref(1,4);covarianceP300_ref(4,1),covarianceP300_ref(4,4)];
-covarianceP300N_ref = [covarianceP300N_ref(1,1),covarianceP300N_ref(1,4);covarianceP300N_ref(4,1),covarianceP300N_ref(4,4)];
+% syms x1 x2;
+% x = [x1;x2];
+% covarianceP300_ref = [covarianceP300_ref(1,1),covarianceP300_ref(1,4);covarianceP300_ref(4,1),covarianceP300_ref(4,4)];
+% covarianceP300N_ref = [covarianceP300N_ref(1,1),covarianceP300N_ref(1,4);covarianceP300N_ref(4,1),covarianceP300N_ref(4,4)];
+% 
+% temp = (x-[mean(ref_P300(:,1));mean(ref_P300(:,4))]); 
+% px_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300_ref)*temp)
+% temp = (x-[mean(ref_NP300(:,1));mean(ref_NP300(:,4))]);
+% px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300N_ref)*temp)
 
-temp = (x-[mean(ref_P300(:,1));mean(ref_P300(:,4))]); 
-px_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300_ref)*temp);
-temp = (x-[mean(ref_NP300(:,1));mean(ref_NP300(:,4))]);
-px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300N_ref)*temp);
+Gauss(test_P300,ref_P300,ref_NP300,300,315)
+
 
 
 %% Utiliser le risque tel que défini par bayes
