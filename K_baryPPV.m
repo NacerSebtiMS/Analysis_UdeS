@@ -2,7 +2,7 @@ function classed = K_baryPPV(k,rp,rnp,c,c1,c2)
 
 classed = cat(2,c,zeros(length(c),1));
 BRP = zeros(1,length(rp(1,:)));
-BNRP = zeros(1,length(rp(1,:)));
+BNRP = zeros(1,length(rnp(1,:)));
 for l = 1:length(rp(1,:))
    BRP(l) = sum(rp(:,l))/length(rp(:,1));
    BNRP(l) = sum(rnp(:,l))/length(rnp(:,1));
