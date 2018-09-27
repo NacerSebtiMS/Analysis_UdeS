@@ -157,7 +157,40 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 %% PARTIE 1.2 (Trois algorithmes de classification bayesienne)
 %% Hypothèse que les loi sont gaussienne
 
+syms x1 x2;
+x = [x1;x2];
+covarianceP300_ref = [covarianceP300_ref(1,1),covarianceP300_ref(1,4);covarianceP300_ref(4,1),covarianceP300_ref(4,4)];
+covarianceP300N_ref = [covarianceP300N_ref(1,1),covarianceP300N_ref(1,4);covarianceP300N_ref(4,1),covarianceP300N_ref(4,4)];
+
+temp = (x-[mean(ref_P300(:,1));mean(ref_P300(:,4))]); 
+px_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300_ref)*temp);
+temp = (x-[mean(ref_NP300(:,1));mean(ref_NP300(:,4))]);
+px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300N_ref)*temp);
+
+
 %% Utiliser le risque tel que défini par bayes
+
+% syms x1 x2;
+% x = [x1;x2];
+% covarianceP300_ref = [covarianceP300_ref(1,1),covarianceP300_ref(1,4);covarianceP300_ref(4,1),covarianceP300_ref(4,4)];
+% covarianceP300N_ref = [covarianceP300N_ref(1,1),covarianceP300N_ref(1,4);covarianceP300N_ref(4,1),covarianceP300N_ref(4,4)];
+% 
+% temp = (x-[mean(ref_P300(:,1));mean(ref_P300(:,4))]); 
+% px_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300_ref)*temp);
+% temp = (x-[mean(ref_NP300(:,1));mean(ref_NP300(:,4))]);
+% px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^2)).*exp(-0.5*temp'*inv(covarianceP300N_ref)*temp);
+% 
+% c1Vc2 = px_C1-px_C2;
+% 
+% figure(100)
+% 
+% hold on
+% ezplot(c1Vc2)
+% 
+% plot(ref_P300(:,1),ref_P300(:,4),'xb')
+% plot(ref_NP300(:,1),ref_NP300(:,4),'xr')
+
+
 
 %% Utiliser frontière + densités de probabilité gausiennes
 
