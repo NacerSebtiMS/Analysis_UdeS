@@ -88,10 +88,15 @@ Rot = [vecp_P300(:,1) vecp_NP300(:,4)]
 % Rot = [vecp_P300(:,1) vecp_P300(:,4)]
 % Rot = vecp_P300 * vecp_NP300
 % Rot = eye(4);
+L = length(Rot(1,:))+1;
+
 R1 = ref_P300 * Rot;
 
 R2 = ref_NP300 * Rot;
 data = test_P300*Rot;
+data2 = test_NP300*Rot;
+
+if 0
 
 subplot(2,2,1)
 plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
@@ -100,7 +105,9 @@ plot(R1(:,1),R1(:,2),'x');
 title('P300')
 subplot(2,2,3)
 plot(R2(:,1),R2(:,2),'o');
-title('NP300')
+
+title("NP300")
+end
 
 [vecp_P300_both,valp]= eig(covarianceP300_both_ref);
 
@@ -158,14 +165,27 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 %% PARTIE 1.2 (Trois algorithmes de classification bayesienne)
 %% Hypothèse que les loi sont gaussienne
 
+gauss = Gauss(test_P300*Rot,ref_P300*Rot,ref_NP300*Rot,300,315);
+gauss_P300 = (sum(gauss(:,L)==300)/length(gauss(:,L)))*100;
+
+
+gauss2 = Gauss(test_NP300*Rot,ref_P300*Rot,ref_NP300*Rot,300,315);
+gauss_NP300 = (sum(gauss2(:,L)==315)/length(gauss2(:,L)))*100;
+
+fprintf('%2.2f%% de reussite gauss P300\n',gauss_P300);
+fprintf('%2.2f%% de reussite gauss NP300\n',gauss_NP300);
+
+
 %% Utiliser le risque tel que défini par bayes
+
+
 
 %% Utiliser frontière + densités de probabilité gausiennes
 
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-L = length(Rot(1,:))+1;
+
 
 R = K_PPV(135,R1,R2,test_P300*Rot,300,315);
 gud_P300 = (sum(R(:,L)==300)/length(R(:,L)))*100;
@@ -196,14 +216,14 @@ km300 = (sum(indexes==300)/length(indexes))*100;
 fprintf('%2.2f%% de reussite KMeans P300\n',km300);
 
 
-Lkm = length( data(1,:))+1;
-[indexes, centres] = kmeans (data, 10);
+Lkm = length( data2(1,:))+1;
+[indexes, centres] = kmeans (data2, 10);
 km1 = K_baryPPV(1,R1,R2,centres,300,315);
 for i = 1:length(indexes)
     indexes(i) = km1( indexes(i), Lkm);
 end
-kmN300 = (sum(indexes==300)/length(indexes))*100;
-fprintf('%2.2f%% de reussite KMeans P300\n',kmN300);
+kmN300 = (sum(indexes==315)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans NP300\n',kmN300);
 
 % test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
@@ -219,218 +239,219 @@ fprintf('%2.2f%% de reussite KMeans P300\n',kmN300);
 
 %% PARTIE 2
 %% Définir ensemble de testes d'apprentissage
-% listeImages = dir('F:\universite\SESSION 8\APP2\git\Analysis_UdeS\Donnees12\baseDeDonneesImages');
-% 
-% %Count images
-% foret_count = 0;
-% street_count = 0;
-% coast_count = 0;
-% 
-% for x = 1:length(listeImages)
-%     if strncmp('forest',listeImages(x).name,6)
-%         foret_count = foret_count +1;
-%     end
-%     
-%     if strncmp('coast',listeImages(x).name,5)
-%         coast_count = coast_count + 1;
-%     end
-%     
-%     if strncmp('street',listeImages(x).name,6)
-%         street_count = street_count + 1;
-%     end
-% end
-% 
-% ref_foret = zeros(foret_count,12);
-% ref_coast = zeros(coast_count,12);
-% ref_street = zeros(street_count,12);
-% 
-% foret_count = 1;
-% street_count = 1;
-% coast_count = 1;
-% %extraire les donnes essentiels
-% for x = 1:length(listeImages)
-%     
-%     disp(listeImages(x).name);
-%     
-%     if strncmp('forest',listeImages(x).name,6) | strncmp('coast',listeImages(x).name,5)|strncmp('street',listeImages(x).name,6)
-%         fichierImage = imread(listeImages(x).name);
-%         
-%         imageRGB=double(fichierImage);
-%         imageYUV=double(JR_Rgb2Yul(fichierImage));
-%         imageYCbCr=double(rgb2ycbcr(fichierImage));
-%         [imLab(:,:,1),imLab(:,:,2),imLab(:,:,3)]=RGB2Lab(fichierImage(:,:,1),fichierImage(:,:,2),fichierImage(:,:,3));
-%         
-%         RGB = reshape(imageRGB,256*256,3);
-%         YUV = reshape(imageYUV,256*256,3);
-%         YCbCr = reshape(imageYCbCr,256*256,3);
-%         Lab = reshape(imLab,256*256,3);
-%         
-%         d1 = [sum(RGB(:,1)/length(RGB)), sum(RGB(:,2)/length(RGB)), sum(RGB(:,3)/length(RGB))];
-%         d2 = [sum(YUV(:,1)/length(YUV)), sum(YUV(:,2)/length(YUV)), sum(YUV(:,3)/length(YUV))];
-%         d3 = [sum(YCbCr(:,1)/length(YCbCr)), sum(YCbCr(:,2)/length(YCbCr)), sum(YCbCr(:,3)/length(YCbCr))];
-%         d4 = [sum(Lab(:,1)/length(Lab)), sum(Lab(:,2)/length(Lab)), sum(Lab(:,3)/length(Lab))];
-%         
-%         mean_all_dim = [d1(1),d1(2),d1(3),d2(1),d2(2),d2(3),d3(1),d3(2),d3(3),d4(1),d4(2),d4(3)];
-%     end
-%     
-%     if strncmp('forest',listeImages(x).name,6)
-%         ref_foret(foret_count,:) = mean_all_dim;
-%         foret_count = foret_count +1;
-%     end
-%     
-%     if strncmp('coast',listeImages(x).name,5)
-%         ref_coast(coast_count,:) = mean_all_dim;
-%         coast_count = coast_count +1;
-%     end
-%     
-%     if strncmp('street',listeImages(x).name,6)
-%         ref_street(street_count,:) = mean_all_dim;
-%         street_count = street_count +1;
-%     end
-% end
-% 
-% Li = length(ref_foret);
-% rfi = ref_foret;
-% moy_ref_foret = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
-% 
-% Li = length(ref_coast);
-% rfi = ref_coast;
-% moy_ref_coast = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
-% 
-% Li = length(ref_street);
-% rfi = ref_street;
-% moy_ref_street = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
-% 
-% 
-% ref_vectors_images = cat(1,ref_foret,ref_coast);
-% rfi = cat(1,ref_vectors_images,ref_street);
-% Li = length(ref_vectors_images);
-% 
-% moy_ref_vectors_images = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
-% 
-% m = rfi'- moy_ref_vectors_images;
-% cov_ref_vectors_images = (m*m')/(Li-1);
-% 
-% 
-% x1 = randn(length(ref_foret),1);
-% x2 = randn(length(ref_coast),1);
-% x3 = randn(length(ref_street),1);
-%    
-% figure
-% subplot(2,3,1)
-% plot(x1,ref_foret(:,1),'o',x2,ref_coast(:,1),'*',x3,ref_street(:,1),'+');
-% title('RGB: c1')
-% 
-% subplot(2,3,2)
-% plot(x1,ref_foret(:,2),'o',x2,ref_coast(:,2),'*',x3,ref_street(:,2),'+');
-% title('RGB: c2')
-% 
-% subplot(2,3,3)
-% plot(x1,ref_foret(:,3),'o',x2,ref_coast(:,3),'*',x3,ref_street(:,3),'+');
-% title('RGB: c3')
-% 
-% subplot(2,3,4)
-% plot(0,moy_ref_foret(1),'o',0,moy_ref_coast(1),'*',0,moy_ref_street(1),'+');
-% title('RGB: c1')
-% 
-% subplot(2,3,5)
-% plot(0,moy_ref_foret(2),'o',0,moy_ref_coast(2),'*',0,moy_ref_street(2),'+');
-% title('RGB: c2')
-% 
-% subplot(2,3,6)
-% plot(0,moy_ref_foret(3),'o',0,moy_ref_coast(3),'*',0,moy_ref_street(3),'+');
-% title('RGB: c3')
-% 
-% 
-% 
-% figure
-% subplot(2,3,1)
-% plot(x1,ref_foret(:,4),'o',x2,ref_coast(:,4),'*',x3,ref_street(:,4),'+');
-% title('YUV: c1')
-% 
-% subplot(2,3,2)
-% plot(x1,ref_foret(:,5),'o',x2,ref_coast(:,5),'*',x3,ref_street(:,5),'+');
-% title('YUV: c2')
-% 
-% subplot(2,3,3)
-% plot(x1,ref_foret(:,6),'o',x2,ref_coast(:,6),'*',x3,ref_street(:,6),'+');
-% title('YUV: c3')
-% 
-% subplot(2,3,4)
-% plot(0,moy_ref_foret(4),'o',0,moy_ref_coast(4),'*',0,moy_ref_street(4),'+');
-% title('YUV: c1')
-% 
-% subplot(2,3,5)
-% plot(0,moy_ref_foret(5),'o',0,moy_ref_coast(5),'*',0,moy_ref_street(5),'+');
-% title('YUV: c2')
-% 
-% subplot(2,3,6)
-% plot(0,moy_ref_foret(6),'o',0,moy_ref_coast(6),'*',0,moy_ref_street(6),'+');
-% title('YUV: c3')
-% 
-% 
-% 
-% figure
-% subplot(2,3,1)
-% plot(x1,ref_foret(:,7),'o',x2,ref_coast(:,7),'*',x3,ref_street(:,7),'+');
-% title('YCbCr: c1')
-% 
-% subplot(2,3,2)
-% plot(x1,ref_foret(:,8),'o',x2,ref_coast(:,8),'*',x3,ref_street(:,8),'+');
-% title('YCbCr: c2')
-% 
-% subplot(2,3,3)
-% plot(x1,ref_foret(:,9),'o',x2,ref_coast(:,9),'*',x3,ref_street(:,9),'+');
-% title('YCbCr: c3')
-% 
-% subplot(2,3,4)
-% plot(0,moy_ref_foret(7),'o',0,moy_ref_coast(7),'*',0,moy_ref_street(7),'+');
-% title('YCbCr: c1')
-% 
-% subplot(2,3,5)
-% plot(0,moy_ref_foret(8),'o',0,moy_ref_coast(8),'*',0,moy_ref_street(8),'+');
-% title('YCbCr: c2')
-% 
-% subplot(2,3,6)
-% plot(0,moy_ref_foret(9),'o',0,moy_ref_coast(9),'*',0,moy_ref_street(9),'+');
-% title('YCbCr: c3')
-% 
-% 
-% figure
-% subplot(2,3,1)
-% plot(x1,ref_foret(:,10),'o',x2,ref_coast(:,10),'*',x3,ref_street(:,10),'+');
-% title('Lab: c1')
-% 
-% subplot(2,3,2)
-% plot(x1,ref_foret(:,11),'o',x2,ref_coast(:,11),'*',x3,ref_street(:,11),'+');
-% title('YCbCr: c2')
-% 
-% subplot(2,3,3)
-% plot(x1,ref_foret(:,12),'o',x2,ref_coast(:,12),'*',x3,ref_street(:,12),'+');
-% title('Lab: c3')
-% 
-% subplot(2,3,4)
-% plot(0,moy_ref_foret(10),'o',0,moy_ref_coast(10),'*',0,moy_ref_street(10),'+');
-% title('Lab: c1')
-% 
-% subplot(2,3,5)
-% plot(0,moy_ref_foret(11),'o',0,moy_ref_coast(11),'*',0,moy_ref_street(11),'+');
-% title('Lab: c2')
-% 
-% subplot(2,3,6)
-% plot(0,moy_ref_foret(12),'o',0,moy_ref_coast(12),'*',0,moy_ref_street(12),'+');
-% title('Lab: c3')
-% 
-% 
-% disp(['street_count:',num2str(street_count),'  coast_count:',num2str(coast_count),'  foret_count:',num2str(foret_count)]);
-% 
-% %% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
-% % on fait le regroupement des points
-% donnees = cat(1,ref_foret,ref_coast);
-% donnees = cat(1,donnees,ref_street);
-% nbNuages=12; % Changer cette variable afin de comprendre l'impact du choix du nombre de nuages.
+if 1
+listeImages = dir('F:\universite\SESSION 8\APP2\git\Analysis_UdeS\Donnees12\baseDeDonneesImages');
+
+%Count images
+foret_count = 0;
+street_count = 0;
+coast_count = 0;
+
+for x = 1:length(listeImages)
+    if strncmp('forest',listeImages(x).name,6)
+        foret_count = foret_count +1;
+    end
+    
+    if strncmp('coast',listeImages(x).name,5)
+        coast_count = coast_count + 1;
+    end
+    
+    if strncmp('street',listeImages(x).name,6)
+        street_count = street_count + 1;
+    end
+end
+
+ref_foret = zeros(foret_count,12);
+ref_coast = zeros(coast_count,12);
+ref_street = zeros(street_count,12);
+
+foret_count = 1;
+street_count = 1;
+coast_count = 1;
+%extraire les donnes essentiels
+for x = 1:length(listeImages)
+    
+    disp(listeImages(x).name);
+    
+    if strncmp('forest',listeImages(x).name,6) | strncmp('coast',listeImages(x).name,5)|strncmp('street',listeImages(x).name,6)
+        fichierImage = imread(listeImages(x).name);
+        
+        imageRGB=double(fichierImage);
+        imageYUV=double(JR_Rgb2Yul(fichierImage));
+        imageYCbCr=double(rgb2ycbcr(fichierImage));
+        [imLab(:,:,1),imLab(:,:,2),imLab(:,:,3)]=RGB2Lab(fichierImage(:,:,1),fichierImage(:,:,2),fichierImage(:,:,3));
+        
+        RGB = reshape(imageRGB,256*256,3);
+        YUV = reshape(imageYUV,256*256,3);
+        YCbCr = reshape(imageYCbCr,256*256,3);
+        Lab = reshape(imLab,256*256,3);
+        
+        d1 = [sum(RGB(:,1)/length(RGB)), sum(RGB(:,2)/length(RGB)), sum(RGB(:,3)/length(RGB))];
+        d2 = [sum(YUV(:,1)/length(YUV)), sum(YUV(:,2)/length(YUV)), sum(YUV(:,3)/length(YUV))];
+        d3 = [sum(YCbCr(:,1)/length(YCbCr)), sum(YCbCr(:,2)/length(YCbCr)), sum(YCbCr(:,3)/length(YCbCr))];
+        d4 = [sum(Lab(:,1)/length(Lab)), sum(Lab(:,2)/length(Lab)), sum(Lab(:,3)/length(Lab))];
+        
+        mean_all_dim = [d1(1),d1(2),d1(3),d2(1),d2(2),d2(3),d3(1),d3(2),d3(3),d4(1),d4(2),d4(3)];
+    end
+    
+    if strncmp('forest',listeImages(x).name,6)
+        ref_foret(foret_count,:) = mean_all_dim;
+        foret_count = foret_count +1;
+    end
+    
+    if strncmp('coast',listeImages(x).name,5)
+        ref_coast(coast_count,:) = mean_all_dim;
+        coast_count = coast_count +1;
+    end
+    
+    if strncmp('street',listeImages(x).name,6)
+        ref_street(street_count,:) = mean_all_dim;
+        street_count = street_count +1;
+    end
+end
+
+Li = length(ref_foret);
+rfi = ref_foret;
+moy_ref_foret = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
+
+Li = length(ref_coast);
+rfi = ref_coast;
+moy_ref_coast = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
+
+Li = length(ref_street);
+rfi = ref_street;
+moy_ref_street = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
+
+
+ref_vectors_images = cat(1,ref_foret,ref_coast);
+rfi = cat(1,ref_vectors_images,ref_street);
+Li = length(ref_vectors_images);
+
+moy_ref_vectors_images = [sum(rfi(:,1))/Li; sum(rfi(:,2))/Li; sum(rfi(:,3))/Li; sum(rfi(:,4))/Li; sum(rfi(:,5))/Li; sum(rfi(:,6))/Li; sum(rfi(:,7))/Li; sum(rfi(:,8))/Li;sum(rfi(:,9))/Li;sum(rfi(:,10))/Li;sum(rfi(:,11))/Li;sum(rfi(:,12))/Li;];
+
+m = rfi'- moy_ref_vectors_images;
+cov_ref_vectors_images = (m*m')/(Li-1);
+
+
+x1 = randn(length(ref_foret),1);
+x2 = randn(length(ref_coast),1);
+x3 = randn(length(ref_street),1);
+   
+figure
+subplot(2,3,1)
+plot(x1,ref_foret(:,1),'o',x2,ref_coast(:,1),'*',x3,ref_street(:,1),'+');
+title('RGB: c1')
+
+subplot(2,3,2)
+plot(x1,ref_foret(:,2),'o',x2,ref_coast(:,2),'*',x3,ref_street(:,2),'+');
+title('RGB: c2')
+
+subplot(2,3,3)
+plot(x1,ref_foret(:,3),'o',x2,ref_coast(:,3),'*',x3,ref_street(:,3),'+');
+title('RGB: c3')
+
+subplot(2,3,4)
+plot(0,moy_ref_foret(1),'o',0,moy_ref_coast(1),'*',0,moy_ref_street(1),'+');
+title('RGB: c1')
+
+subplot(2,3,5)
+plot(0,moy_ref_foret(2),'o',0,moy_ref_coast(2),'*',0,moy_ref_street(2),'+');
+title('RGB: c2')
+
+subplot(2,3,6)
+plot(0,moy_ref_foret(3),'o',0,moy_ref_coast(3),'*',0,moy_ref_street(3),'+');
+title('RGB: c3')
+
+
+
+figure
+subplot(2,3,1)
+plot(x1,ref_foret(:,4),'o',x2,ref_coast(:,4),'*',x3,ref_street(:,4),'+');
+title('YUV: c1')
+
+subplot(2,3,2)
+plot(x1,ref_foret(:,5),'o',x2,ref_coast(:,5),'*',x3,ref_street(:,5),'+');
+title('YUV: c2')
+
+subplot(2,3,3)
+plot(x1,ref_foret(:,6),'o',x2,ref_coast(:,6),'*',x3,ref_street(:,6),'+');
+title('YUV: c3')
+
+subplot(2,3,4)
+plot(0,moy_ref_foret(4),'o',0,moy_ref_coast(4),'*',0,moy_ref_street(4),'+');
+title('YUV: c1')
+
+subplot(2,3,5)
+plot(0,moy_ref_foret(5),'o',0,moy_ref_coast(5),'*',0,moy_ref_street(5),'+');
+title('YUV: c2')
+
+subplot(2,3,6)
+plot(0,moy_ref_foret(6),'o',0,moy_ref_coast(6),'*',0,moy_ref_street(6),'+');
+title('YUV: c3')
+
+
+
+figure
+subplot(2,3,1)
+plot(x1,ref_foret(:,7),'o',x2,ref_coast(:,7),'*',x3,ref_street(:,7),'+');
+title('YCbCr: c1')
+
+subplot(2,3,2)
+plot(x1,ref_foret(:,8),'o',x2,ref_coast(:,8),'*',x3,ref_street(:,8),'+');
+title('YCbCr: c2')
+
+subplot(2,3,3)
+plot(x1,ref_foret(:,9),'o',x2,ref_coast(:,9),'*',x3,ref_street(:,9),'+');
+title('YCbCr: c3')
+
+subplot(2,3,4)
+plot(0,moy_ref_foret(7),'o',0,moy_ref_coast(7),'*',0,moy_ref_street(7),'+');
+title('YCbCr: c1')
+
+subplot(2,3,5)
+plot(0,moy_ref_foret(8),'o',0,moy_ref_coast(8),'*',0,moy_ref_street(8),'+');
+title('YCbCr: c2')
+
+subplot(2,3,6)
+plot(0,moy_ref_foret(9),'o',0,moy_ref_coast(9),'*',0,moy_ref_street(9),'+');
+title('YCbCr: c3')
+
+
+figure
+subplot(2,3,1)
+plot(x1,ref_foret(:,10),'o',x2,ref_coast(:,10),'*',x3,ref_street(:,10),'+');
+title('Lab: c1')
+
+subplot(2,3,2)
+plot(x1,ref_foret(:,11),'o',x2,ref_coast(:,11),'*',x3,ref_street(:,11),'+');
+title('YCbCr: c2')
+
+subplot(2,3,3)
+plot(x1,ref_foret(:,12),'o',x2,ref_coast(:,12),'*',x3,ref_street(:,12),'+');
+title('Lab: c3')
+
+subplot(2,3,4)
+plot(0,moy_ref_foret(10),'o',0,moy_ref_coast(10),'*',0,moy_ref_street(10),'+');
+title('Lab: c1')
+
+subplot(2,3,5)
+plot(0,moy_ref_foret(11),'o',0,moy_ref_coast(11),'*',0,moy_ref_street(11),'+');
+title('Lab: c2')
+
+subplot(2,3,6)
+plot(0,moy_ref_foret(12),'o',0,moy_ref_coast(12),'*',0,moy_ref_street(12),'+');
+title('Lab: c3')
+
+
+disp(['street_count:',num2str(street_count),'  coast_count:',num2str(coast_count),'  foret_count:',num2str(foret_count)]);
+
+%% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
+% on fait le regroupement des points
+donnees = cat(1,ref_foret,ref_coast);
+donnees = cat(1,donnees,ref_street);
+nbNuages=100; % Changer cette variable afin de comprendre l'impact du choix du nombre de nuages.
 % [indexes, centres] = kmeans (donnees, nbNuages);
-% 
+
 % % Plot the result
 % figure
 % plot (donnees (indexes==1, 1), donnees (indexes==1, 2), '+');
@@ -453,22 +474,20 @@ fprintf('%2.2f%% de reussite KMeans P300\n',kmN300);
 % figure
 % plot (ref_foret (:, 1), ref_foret (:, 2), '+',ref_coast (:, 1), ref_coast (:, 2), '+',ref_street (:, 1), ref_street (:, 2), '+');
 %  
-%  
-% 
-% [indexes, centres] = kmeans (ref_foret, nbNuages);
-% foret1 = sum(indexes == 1)
-% foret2 = sum(indexes == 2)
-% foret3 = sum(indexes == 3)
-% 
-% [indexes, centres] = kmeans (ref_coast, nbNuages);
-% coast1 = sum(indexes == 1)
-% coast2 = sum(indexes == 2)
-% coast3 = sum(indexes == 3)
-% 
-% [indexes, centres] = kmeans (ref_street, nbNuages);
-% street1 = sum(indexes == 1)
-% street2 = sum(indexes == 2)
-% street3 = sum(indexes == 3)
+
+
+
+% Lkm = length( data(1,:))+1;
+% [indexes, centres] = kmeans (nbNuages, 100);
+% km1 = K_baryPPV(1,R1,R2,centres,300,315);
+% for i = 1:length(indexes)
+%     indexes(i) = km1( indexes(i), Lkm);
+% end
+% km300 = (sum(indexes==300)/length(indexes))*100;
+% fprintf('%2.2f%% de reussite KMeans P300\n',km300);
+
+
+end
 
 %% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
 
