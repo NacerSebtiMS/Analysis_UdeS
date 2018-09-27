@@ -1,4 +1,4 @@
-function classed = Gauss(c,ref_P300,ref_NP300,c1,c2)
+function classed = Bayes(c,ref_P300,ref_NP300,c1,c2)
 len = length(ref_P300(1,:));
 % if len == 2
 %     x=[x1;x2];
@@ -20,19 +20,15 @@ covarianceP300N_ref = (m2*m2')/(length(ref_NP300)-1);
 
 classed = cat(2,c,zeros(length(c),1));
 
-long = length(c(1,:));
-dim = long/2;
 for i = 1:length(c)
     x = c(i,:);
-    temp1 = x-moyP300_ref;
-    d1 = temp1*inv(covarianceP300_ref)*temp1';
-    px_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^(dim)).*exp(-0.5*d1));
+    temp = x-moyP300_ref;
+    d = temp*inv(covarianceP300_ref)*temp';
+    Rx_C1= (1/sqrt(det(covarianceP300_ref)*(2*pi)^2)).*exp(-0.5*d);
+    temp = x-moyP300N_ref;
+    Rx_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^2)).*exp(-0.5*d);
     
-    temp2 = x-moyP300N_ref;
-    d2 = temp2*inv(covarianceP300N_ref)*temp2';
-    px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^(dim)).*exp(-0.5*d2));
-    
-    if px_C1 > px_C2
+    if Rx_C1 < Rx_C2
         classed(i, length(classed(1,:))) = c1;
     else
         classed(i, length(classed(1,:))) = c2;

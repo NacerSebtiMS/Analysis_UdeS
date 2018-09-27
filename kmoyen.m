@@ -1,17 +1,17 @@
-function [C] = kmoyen(X,k)
+function [ind,centre] = kmoyen(X,k)
     ran1 = rand(1);
     ran2 = rand(1);
     
     C = zeros(length(X),1);
+    centre = zeros( k, length(X(1,:)) );
     
     while ran1 == ran2
         ran1 = rand(1);
         ran2 = rand(1);
     end
 
-    b1 = X(round(ran1*length(X)),:);
-    b2 = X(round(ran2*length(X)),:);
-    
+    b1 = X(round(ran1*(length(X)-1)+1),:);
+    b2 = X(round(ran2*(length(X)-1)+1),:);
     
     end_loop = 1;
     old_dist = 0;
