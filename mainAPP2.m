@@ -80,8 +80,26 @@ m = P300_both_ref'- moyP300_both_ref;
 covarianceP300_both_ref = (m*m')/(length(P300_both_ref)-1);
 
 
-[vecp_P300,valp]= eig(covarianceP300_ref); 
-[vecp_NP300,valp]= eig(covarianceP300N_ref);
+[vecp_P300,valp]= eig(covarianceP300_ref)
+[vecp_NP300,valp]= eig(covarianceP300N_ref)
+
+% Rot = [vecp_P300(:,3) vecp_P300(:,4) vecp_NP300(:,3) vecp_NP300(:,4)]
+Rot = [vecp_P300(:,3) vecp_NP300(:,4)]
+% Rot = [vecp_P300(:,1) vecp_P300(:,4)]
+% Rot = vecp_P300 * vecp_NP300
+R1 = ref_P300 * Rot;
+
+R2 = ref_NP300 * Rot;
+
+subplot(2,2,1)
+plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
+subplot(2,2,2)
+plot(R1(:,1),R1(:,2),'x');
+title("P300")
+subplot(2,2,3)
+plot(R2(:,1),R2(:,2),'o');
+title("NP300")
+
 [vecp_P300_both,valp]= eig(covarianceP300_both_ref);
 
 [vecp_X1_ref,valp]= eig(cov_X1_ref);
@@ -128,8 +146,8 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 
 %% Forme des probabilités après décorrélation
 
-figure
-plot(ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,4),'+');
+% figure
+% plot(ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,4),'+');
 
 %% Forme visuelle des équations des frontières après décorrélation
 
@@ -145,20 +163,23 @@ plot(ref_P300_dec(:,1),ref_P300_dec(:,4),'*',ref_NP300_dec(:,1),ref_NP300_dec(:,
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-
-R = K_PPV(1,ref_P300,ref_NP300,test_P300,300,315);
-C_kppv = K_PPV(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)],test_both_p300_dec,0,1);
-[C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
+L = length(Rot(1,:))+1;
+R = K_PPV(1,R1,R2,test_P300*Rot,300,315);
+gud_P300 = (sum(R(:,L)==300)/length(R(:,L)))*100
+kppvNP300 = K_PPV(1,R1,R2,test_NP300*Rot,300,315);
+gud_NP300 = (sum(kppvNP300(:,L)==315)/length(kppvNP300(:,L)))*100
+% C_kppv = K_PPV(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)],test_both_p300_dec,0,1);
+% [C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
 
 %% k-moyennnes
 
 % test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
 
-C = kmoyen(test_both_p300_dec,2);
-figure
-plot(test_P300_dec(:,1),test_P300_dec(:,4),'*',test_NP300_dec(:,1),test_NP300_dec(:,4),'o')
-[C1,C2] = PlotPPV(test_both_p300_dec,C);
+%C = kmoyen(test_both_p300_dec,2);
+% figure
+% plot(test_P300_dec(:,1),test_P300_dec(:,4),'*',test_NP300_dec(:,1),test_NP300_dec(:,4),'o')
+% [C1,C2] = PlotPPV(test_both_p300_dec,C);
 
 
 %% Taux d'erreur de classification des 5 techiques
