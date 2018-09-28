@@ -194,6 +194,7 @@ end
 km300 = (sum(indexes==300)/length(indexes))*100;
 fprintf('%2.2f%% de reussite KMeans P300\n',km300);
 
+% Plot the resu
 
 Lkm = length( data2(1,:))+1;
 [indexes, centres] = kmeans (data2, 10);
@@ -203,6 +204,7 @@ for i = 1:length(indexes)
 end
 kmN300 = (sum(indexes==315)/length(indexes))*100;
 fprintf('%2.2f%% de reussite KMeans NP300\n',kmN300);
+
 
 % test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
@@ -218,6 +220,10 @@ fprintf('%2.2f%% de reussite KMeans NP300\n',kmN300);
 
 %% PARTIE 2
 %% Définir ensemble de testes d'apprentissage
+
+addpath('codeOctaveMatlabEtudiantImages/')
+
+%% Load all images from folder. Source: stack-overflow
 if 1
 listeImages = dir('F:\universite\SESSION 8\APP2\git\Analysis_UdeS\Donnees12\baseDeDonneesImages');
 
@@ -270,7 +276,14 @@ for x = 1:length(listeImages)
         d3 = [sum(YCbCr(:,1)/length(YCbCr)), sum(YCbCr(:,2)/length(YCbCr)), sum(YCbCr(:,3)/length(YCbCr))];
         d4 = [sum(Lab(:,1)/length(Lab)), sum(Lab(:,2)/length(Lab)), sum(Lab(:,3)/length(Lab))];
         
+%         d1 = [sum(RGB(:,1) - d1(1)),sum(RGB(:,2) - d1(2)),sum(RGB(:,3) - d1(3))];
+%         d2 = [sum(YUV(:,1) - d2(1)),sum(YUV(:,2) - d2(2)),sum(YUV(:,3) - d2(3))];
+%         d3 = [sum(YCbCr(:,1) - d3(1)),sum(YCbCr(:,2) - d3(2)),sum(YCbCr(:,3) - d3(3))];
+%         d4 = [sum(Lab(:,1) - d4(1)),sum(Lab(:,2) - d4(2)),sum(Lab(:,3) - d4(3))];
+%         
+        
         mean_all_dim = [d1(1),d1(2),d1(3),d2(1),d2(2),d2(3),d3(1),d3(2),d3(3),d4(1),d4(2),d4(3)];
+        %mean_all_dim = [d1(1),d1(2),d1(3),d2(1),d2(2),d2(3),d3(1),d3(2),d3(3),d4(1),d4(2),d4(3)];
     end
     
     if strncmp('forest',listeImages(x).name,6)
@@ -288,6 +301,9 @@ for x = 1:length(listeImages)
         street_count = street_count +1;
     end
 end
+
+
+
 
 Li = length(ref_foret);
 rfi = ref_foret;
@@ -421,56 +437,53 @@ subplot(2,3,6)
 plot(0,moy_ref_foret(12),'o',0,moy_ref_coast(12),'*',0,moy_ref_street(12),'+');
 title('Lab: c3')
 
-
 disp(['street_count:',num2str(street_count),'  coast_count:',num2str(coast_count),'  foret_count:',num2str(foret_count)]);
 
 %% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
 % on fait le regroupement des points
 donnees = cat(1,ref_foret,ref_coast);
 donnees = cat(1,donnees,ref_street);
-nbNuages=100; % Changer cette variable afin de comprendre l'impact du choix du nombre de nuages.
-% [indexes, centres] = kmeans (donnees, nbNuages);
-
-% % Plot the result
-% figure
-% plot (donnees (indexes==1, 1), donnees (indexes==1, 2), '+');
-% hold on
-% plot (donnees (indexes==2, 1), donnees (indexes==2, 2), '+');
-% plot (donnees (indexes==3, 1), donnees (indexes==3, 2), '+');
-% plot (donnees (indexes==4, 1), donnees (indexes==4, 2), '+');
-% plot (donnees (indexes==5, 1), donnees (indexes==5, 2), '+');
-% plot (donnees (indexes==6, 1), donnees (indexes==6, 2), '+');
-% plot (donnees (indexes==7, 1), donnees (indexes==7, 2), '+');
-% plot (donnees (indexes==8, 1), donnees (indexes==8, 2), '+');
-% plot (donnees (indexes==9, 1), donnees (indexes==9, 2), '+');
-% plot (donnees (indexes==10, 1), donnees (indexes==10, 2), '+');
-% plot (donnees (indexes==11, 1), donnees (indexes==11, 2), '+');
-% plot (donnees (indexes==12, 1), donnees (indexes==12, 2), '+');
-% 
-% plot (centres (:, 1), centres (:, 2), 'kv', 'markersize', 10);
-% hold off
-% 
-% figure
-% plot (ref_foret (:, 1), ref_foret (:, 2), '+',ref_coast (:, 1), ref_coast (:, 2), '+',ref_street (:, 1), ref_street (:, 2), '+');
-%  
+nbNuages=50; % Changer cette variable afin de comprendre l'impact du choix du nombre de nuages.
 
 
 
-% Lkm = length( data(1,:))+1;
-% [indexes, centres] = kmeans (nbNuages, 100);
-% km1 = K_baryPPV(1,R1,R2,centres,300,315);
-% for i = 1:length(indexes)
-%     indexes(i) = km1( indexes(i), Lkm);
-% end
-% km300 = (sum(indexes==300)/length(indexes))*100;
-% fprintf('%2.2f%% de reussite KMeans P300\n',km300);
+donnees_forest = [ref_foret(:,1) ref_foret(:,6) ref_foret(:,9)];
+donnees_coast = [ref_coast(:,1) ref_coast(:,6) ref_coast(:,9)];
+donnees_street = [ref_street(:,1) ref_street(:,6) ref_street(:,9)];
 
 
+Lkm = length( donnees_forest(1,:))+1;
+[indexes, centres] = kmeans (donnees_forest, nbNuages);
+km1 = K_imgPPV(donnees_forest,donnees_coast,donnees_street,centres,1,2,3);
+for i = 1:length(indexes)
+    indexes(i) = km1( indexes(i), Lkm);
 end
+km300 = (sum(indexes==1)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans Foret\n',km300);
 
-%% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
+Lkm = length( donnees_coast(1,:))+1;
+[indexes, centres] = kmeans (donnees_coast, nbNuages);
+km1 = K_imgPPV(donnees_forest,donnees_coast,donnees_street,centres,1,2,3);
+for i = 1:length(indexes)
+    indexes(i) = km1( indexes(i), Lkm);
+end
+km300 = (sum(indexes==1)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans Coast\n',km300);
+
+Lkm = length( donnees_street(1,:))+1;
+[indexes, centres] = kmeans (donnees_street, nbNuages);
+km1 = K_imgPPV(donnees_forest,donnees_coast,donnees_street,centres,1,2,3);
+for i = 1:length(indexes)
+    indexes(i) = km1( indexes(i), Lkm);
+end
+km300 = (sum(indexes==1)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans Street\n',km300);
+
+
 
 %% Testes avec deux experiences différentes (présentations différentes de couleurs des images)
 
 %% Performence et résultats obtenus
 
+
+end
