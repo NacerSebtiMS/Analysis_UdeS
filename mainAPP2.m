@@ -176,16 +176,10 @@ fprintf('%2.2f%% de reussite gauss P300\n',gauss_P300);
 fprintf('%2.2f%% de reussite gauss NP300\n',gauss_NP300);
 end
 
-%% Utiliser le risque tel que défini par bayes
 
-
-
-%% Utiliser frontière + densités de probabilité gausiennes
-
-%% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-
+if 1
 fprintf('____________\n');
 k = 1
 R = K_PPV(k,R1,R2,test_P300*Rot,300,315);
@@ -206,7 +200,9 @@ fprintf('%2.2f%% de reussite NP300 K-PPV avec barycentres\n',gud_NP300);
 % C_kppv = K_PPV(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)],test_both_p300_dec,0,1);
 % [C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
 fprintf('____________\n');
+end
 %% k-moyennnes
+if 1
 Lkm = length( data(1,:))+1;
 [indexes, centres] = kmeans (data, 10);
 km1 = K_baryPPV(1,R1,R2,centres,300,315);
@@ -226,7 +222,7 @@ for i = 1:length(indexes)
 end
 kmN300 = (sum(indexes==315)/length(indexes))*100;
 fprintf('%2.2f%% de reussite KMeans NP300\n',kmN300);
-
+end
 
 % test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
@@ -243,10 +239,9 @@ fprintf('%2.2f%% de reussite KMeans NP300\n',kmN300);
 %% PARTIE 2
 %% Définir ensemble de testes d'apprentissage
 
-addpath('codeOctaveMatlabEtudiantImages/')
 
 %% Load all images from folder. Source: stack-overflow
-if 1
+if 0
 listeImages = dir('F:\universite\SESSION 8\APP2\git\Analysis_UdeS\Donnees12\baseDeDonneesImages');
 
 %Count images
@@ -353,6 +348,7 @@ cov_ref_vectors_images = (m*m')/(Li-1);
 x1 = randn(length(ref_foret),1);
 x2 = randn(length(ref_coast),1);
 x3 = randn(length(ref_street),1);
+
 if 0 
 figure
 subplot(2,3,1)
