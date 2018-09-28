@@ -96,16 +96,16 @@ R2 = ref_NP300 * Rot;
 data = test_P300*Rot;
 data2 = test_NP300*Rot;
 
-if 0
+if 1
 
 subplot(2,2,1)
 plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
+title('P300 et NP300')
 subplot(2,2,2)
 plot(R1(:,1),R1(:,2),'x');
 title('P300')
 subplot(2,2,3)
 plot(R2(:,1),R2(:,2),'o');
-
 title("NP300")
 end
 
@@ -164,7 +164,7 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 
 %% PARTIE 1.2 (Trois algorithmes de classification bayesienne)
 %% Hypothèse que les loi sont gaussienne
-
+if 1
 gauss = Gauss(test_P300*Rot,ref_P300*Rot,ref_NP300*Rot,300,315);
 gauss_P300 = (sum(gauss(:,L)==300)/length(gauss(:,L)))*100;
 
@@ -174,7 +174,7 @@ gauss_NP300 = (sum(gauss2(:,L)==315)/length(gauss2(:,L)))*100;
 
 fprintf('%2.2f%% de reussite gauss P300\n',gauss_P300);
 fprintf('%2.2f%% de reussite gauss NP300\n',gauss_NP300);
-
+end
 
 %% Utiliser le risque tel que défini par bayes
 
@@ -186,22 +186,23 @@ fprintf('%2.2f%% de reussite gauss NP300\n',gauss_NP300);
 
 %% k-PPV
 
-
-R = K_PPV(135,R1,R2,test_P300*Rot,300,315);
+fprintf('____________\n');
+k = 1
+R = K_PPV(k,R1,R2,test_P300*Rot,300,315);
 gud_P300 = (sum(R(:,L)==300)/length(R(:,L)))*100;
-fprintf('%2.2f%% de reussite  P300\n',gud_P300);
-kppvNP300 = K_PPV(135,R1,R2,test_NP300*Rot,300,315);
+fprintf('%2.2f%% de reussite K-PPV P300\n',gud_P300);
+kppvNP300 = K_PPV(k,R1,R2,test_NP300*Rot,300,315);
 gud_NP300 = (sum(kppvNP300(:,L)==315)/length(kppvNP300(:,L)))*100;
-fprintf('%2.2f%% de reussite NP300\n',gud_NP300);
+fprintf('%2.2f%% de reussite K-PPV NP300\n',gud_NP300);
 
 fprintf('____________\n');
 
 kppvP300 = K_baryPPV(1,R1,R2,test_P300*Rot,300,315);
 gud_P300 = (sum(kppvP300(:,L)==300)/length(kppvP300(:,L)))*100;
-fprintf('%2.2f%% de reussite P300\n',gud_P300);
+fprintf('%2.2f%% de reussite P300 K-PPV avec barycentres\n',gud_P300);
 kppvNP300 = K_baryPPV(1,R1,R2,test_NP300*Rot,300,315);
 gud_NP300 = (sum(kppvNP300(:,L)==315)/length(kppvNP300(:,L)))*100;
-fprintf('%2.2f%% de reussite NP300\n',gud_NP300);
+fprintf('%2.2f%% de reussite NP300 K-PPV avec barycentres\n',gud_NP300);
 % C_kppv = K_PPV(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) ref_NP300_dec(:,4)],test_both_p300_dec,0,1);
 % [C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
 fprintf('____________\n');
@@ -336,7 +337,7 @@ cov_ref_vectors_images = (m*m')/(Li-1);
 x1 = randn(length(ref_foret),1);
 x2 = randn(length(ref_coast),1);
 x3 = randn(length(ref_street),1);
-   
+if 0 
 figure
 subplot(2,3,1)
 plot(x1,ref_foret(:,1),'o',x2,ref_coast(:,1),'*',x3,ref_street(:,1),'+');
@@ -444,7 +445,7 @@ title('Lab: c3')
 
 
 disp(['street_count:',num2str(street_count),'  coast_count:',num2str(coast_count),'  foret_count:',num2str(foret_count)]);
-
+end
 %% Classification à l'aide d'une méthode paramétrique (supervisé ou non)
 % on fait le regroupement des points
 donnees = cat(1,ref_foret,ref_coast);

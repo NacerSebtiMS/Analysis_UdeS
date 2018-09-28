@@ -30,11 +30,12 @@ for i = 1:length(c)
     
     temp2 = x-moyP300N_ref;
     d2 = temp2*inv(covarianceP300N_ref)*temp2';
+    clc
     px_C2= (1/sqrt(det(covarianceP300N_ref)*(2*pi)^(dim)).*exp(-0.5*d2));
     
     if px_C1 > px_C2
         classed(i, length(classed(1,:))) = c1;
     else
         classed(i, length(classed(1,:))) = c2;
-    end  
+    end
 end
