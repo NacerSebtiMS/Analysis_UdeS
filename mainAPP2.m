@@ -88,11 +88,15 @@ Rot = [vecp_P300(:,1) vecp_NP300(:,4)]
 % Rot = [vecp_P300(:,1) vecp_P300(:,4)]
 % Rot = vecp_P300 * vecp_NP300
 % Rot = eye(4);
+L = length(Rot(1,:))+1;
+
 R1 = ref_P300 * Rot;
 
 R2 = ref_NP300 * Rot;
 data = test_P300*Rot;
 data2 = test_NP300*Rot;
+
+if 0
 
 subplot(2,2,1)
 plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
@@ -101,7 +105,9 @@ plot(R1(:,1),R1(:,2),'x');
 title('P300')
 subplot(2,2,3)
 plot(R2(:,1),R2(:,2),'o');
-title('NP300')
+
+title("NP300")
+end
 
 [vecp_P300_both,valp]= eig(covarianceP300_both_ref);
 
@@ -159,14 +165,27 @@ ref_both_dec = cat(1,[ref_P300_dec(:,1) ref_P300_dec(:,4)],[ref_NP300_dec(:,1) r
 %% PARTIE 1.2 (Trois algorithmes de classification bayesienne)
 %% Hypothèse que les loi sont gaussienne
 
+gauss = Gauss(test_P300*Rot,ref_P300*Rot,ref_NP300*Rot,300,315);
+gauss_P300 = (sum(gauss(:,L)==300)/length(gauss(:,L)))*100;
+
+
+gauss2 = Gauss(test_NP300*Rot,ref_P300*Rot,ref_NP300*Rot,300,315);
+gauss_NP300 = (sum(gauss2(:,L)==315)/length(gauss2(:,L)))*100;
+
+fprintf('%2.2f%% de reussite gauss P300\n',gauss_P300);
+fprintf('%2.2f%% de reussite gauss NP300\n',gauss_NP300);
+
+
 %% Utiliser le risque tel que défini par bayes
+
+
 
 %% Utiliser frontière + densités de probabilité gausiennes
 
 %% Taux moyen de classification des 3 systèmes
 
 %% k-PPV
-L = length(Rot(1,:))+1;
+
 
 R = K_PPV(135,R1,R2,test_P300*Rot,300,315);
 gud_P300 = (sum(R(:,L)==300)/length(R(:,L)))*100;
