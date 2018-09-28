@@ -91,6 +91,7 @@ Rot = [vecp_P300(:,1) vecp_NP300(:,4)]
 R1 = ref_P300 * Rot;
 
 R2 = ref_NP300 * Rot;
+data = test_P300*Rot;
 
 subplot(2,2,1)
 plot(R1(:,1),R1(:,2),'x',R2(:,1),R2(:,2),'o');
@@ -183,6 +184,24 @@ fprintf('%2.2f%% de reussite NP300\n',gud_NP300);
 % [C1,C2] = PlotPPV(test_both_p300_dec,C_kppv(:,3));
 
 %% k-moyennnes
+Lkm = length( data(1,:))+1;
+[indexes, centres] = kmeans (data, 10);
+km1 = K_baryPPV(1,R1,R2,centres,300,315);
+for i = 1:length(indexes)
+    indexes(i) = km1( indexes(i), Lkm);
+end
+km300 = (sum(indexes==300)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans P300\n',km300);
+
+
+Lkm = length( data(1,:))+1;
+[indexes, centres] = kmeans (data, 10);
+km1 = K_baryPPV(1,R1,R2,centres,300,315);
+for i = 1:length(indexes)
+    indexes(i) = km1( indexes(i), Lkm);
+end
+kmN300 = (sum(indexes==300)/length(indexes))*100;
+fprintf('%2.2f%% de reussite KMeans P300\n',kmN300);
 
 % test_rand = cat(1,(abs(round(randn(1,40)))+10)',(abs(round(randn(1,40))))');
 % test_rand = cat(2,test_rand,ones(length(test_rand),1));
